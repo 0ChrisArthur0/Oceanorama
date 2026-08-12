@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>窗户 · Window</title>
+  <link rel="stylesheet" href="css/style.css?v=20">
+</head>
+<body>
+  <div id="app">
+    <!-- 隐藏的视频源 -->
+    <video id="videoSource" playsinline loop muted style="display:none"></video>
+
+    <!-- 白色墙面背景 -->
+    <div class="wall-bg"></div>
+
+    <!-- 窗户盒子 — 视频 + 窗框，整体缩放 -->
+    <div class="window-box" id="windowBox">
+      <canvas id="mainCanvas"></canvas>
+      <div class="boil-layer">
+        <img src="window素材/IMG_8899.PNG" alt="窗户" class="window-art" draggable="false">
+      </div>
+    </div>
+
+    <p class="wall-hint" id="wallHint">点击窗户</p>
+
+    <!-- 音频控制面板 -->
+    <div class="audio-panel" id="audioPanel">
+      <!-- 收起时的小音符按钮 -->
+      <button class="panel-mini" id="panelMini" aria-label="展开音频面板">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+        </svg>
+      </button>
+
+      <!-- 头部栏：标题 + 收起按钮 -->
+      <div class="panel-header">
+        <span class="panel-title">音频</span>
+        <button class="panel-collapse" id="panelCollapse" aria-label="收起面板">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- 可折叠内容区 -->
+      <div class="panel-body" id="panelBody">
+        <!-- 海洋馆音乐模块 -->
+        <div class="audio-module">
+          <div class="audio-header">
+            <button class="audio-toggle" id="musicToggle" aria-label="开关海洋馆音乐">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+              </svg>
+            </button>
+            <span class="audio-name">海洋馆</span>
+            <button class="audio-switch" id="musicSwitch" aria-label="切换音乐风格">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+              </svg>
+            </button>
+            <span class="audio-label" id="musicLabel">宁静海底</span>
+          </div>
+          <div class="volume-row">
+            <svg class="vol-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <input type="range" class="volume-slider" id="musicVolume" min="0" max="100" value="40">
+          </div>
+        </div>
+
+        <!-- 分隔线 -->
+        <div class="audio-divider"></div>
+
+        <!-- 白噪音模块 -->
+        <div class="audio-module">
+          <div class="audio-header">
+            <button class="audio-toggle" id="noiseToggle" aria-label="开关白噪音">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12h2l3-9 4 18 3-9h8"/>
+              </svg>
+            </button>
+            <span class="audio-name">白噪音</span>
+            <button class="audio-switch" id="noiseSwitch" aria-label="切换噪音类型">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+              </svg>
+            </button>
+            <span class="audio-label" id="noiseLabel">白噪</span>
+          </div>
+          <div class="volume-row">
+            <svg class="vol-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <input type="range" class="volume-slider" id="noiseVolume" min="0" max="100" value="30">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 线条抖动 SVG 滤镜 -->
+  <svg class="svg-filters" aria-hidden="true">
+    <defs>
+      <filter id="boil" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="3" seed="1" result="noise">
+          <animate attributeName="seed" values="1;2;3;4;1" dur="1.2s" repeatCount="indefinite"/>
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.0" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <script src="js/app.js?v=15"></script>
+</body>
+</html>
